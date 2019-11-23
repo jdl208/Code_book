@@ -8,7 +8,10 @@ body {
 
 main {
     flex: 1 0 auto;
+    background-color: lightcyan;
 }
+
+/* ALERTS */
 .alert {
     padding: .75rem 1.25rem;
     margin-top: 1rem;
@@ -32,4 +35,10 @@ main {
     color: #004085;
     background-color: #cce5ff;
     border-color: #b8daff;
+}
+
+.profile_img {
+    max-height: 300px;
+    max-width: 100%;
+    height: auto;
 }

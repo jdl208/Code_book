@@ -6,14 +6,15 @@ def load_user(username):
     user = mongo.db.users.find_one({"username": username})
     if not user:
         return None
-    return User(user['username'], user['email'], user['password'])
+    return User(user['username'], user['email'], user['password'], user['profile_pic'])
 
 
 class User():
-    def __init__(self, username, email, password):
+    def __init__(self, username, email, password, profile_pic):
         self.username = username
         self.email = email
         self.password = password
+        self.profile_pic = profile_pic
 
     def is_authenticated(self):
         return True

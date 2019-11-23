@@ -1,8 +1,11 @@
 from codebook import app, mongo, bcrypt
 from flask import render_template, url_for, redirect, flash, request
-from codebook.forms import RegistrationForm, LoginForm
+from codebook.forms import RegistrationForm, LoginForm, UpdateAccountForm
 from codebook.models import User
 from flask_login import login_user, current_user, logout_user, login_required
+import os
+import secrets
+from PIL import Image
 # from bson.objectid import ObjectId
 
 
@@ -19,7 +22,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        new_user = User(username=form.username.data, email=form.email.data, password=hashed_password, profile_pic='default.jpg')
         users = mongo.db.users
         users.insert_one(new_user.__dict__)
         flash(f'Account for {form.username.data} has been created! You can now log in.', 'success')
@@ -35,7 +38,7 @@ def login():
     if form.validate_on_submit():
         user = mongo.db.users.find_one({'email': form.email.data})
         if user and bcrypt.check_password_hash(user['password'], form.password.data):
-            user_obj = User(user['username'], user['email'], user['password'])
+            user_obj = User(user['username'], user['email'], user['password'], user['profile_pic'])
             login_user(user_obj, remember=form.remember.data)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home'))
@@ -50,7 +53,37 @@ def logout():
     return redirect(url_for('home'))
 
 
-@app.route('/account')
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/prof_img', picture_fn)
+    #  Resize uploaded profile picture to 125 by 125 px
+    output_size = (300, 300)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+    return picture_fn
+
+
+@app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html', title='Account')
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            old_value = mongo.db.users.find_one({'username': current_user.username})
+            new_pic = {'$set': {'profile_pic': picture_file}}
+            mongo.db.users.update_one(old_value, new_pic)
+        new_value = {'$set': {'username': form.username.data, 'email': form.email.data}}
+        mongo.db.users.update_one(old_value, new_value)
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    else:
+        flash('Error updating account. Please try again', 'fail')
+    profile_pic = url_for('static', filename='prof_img/' + current_user.profile_pic)
+    return render_template('account.html', title='Account', profile_pic=profile_pic, form=form)

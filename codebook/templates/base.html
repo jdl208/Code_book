@@ -35,15 +35,27 @@
 			<li>
 				<div class="user-view">
 					<div class="background blue-grey darken-3">
-						<img src="#">
+						<img src="">
 					</div>
-					<a href="#user"><img class="circle" src="#"></a>
-					<a href="#name"><span class="white-text name">{{ current_user.username }}</span></a>
-					<a href="#email"><span class="white-text email">{{ current_user.email }}</span></a>
+                    {% if current_user.is_authenticated %}
+                        <a href="#user"><img class="circle" src="{{ url_for('static', filename='prof_img/' + current_user.profile_pic) }}"></a>
+                        <a href="#name"><span class="white-text name">{{ current_user.username }}</span></a>
+                        <a href="#email"><span class="white-text email">{{ current_user.email }}</span></a>
+                    {% else %}
+                        <a href="#user"><img class="circle" src="{{ url_for('static', filename='prof_img/default.png') }}"></a>
+                        <a href="#name"><span class="white-text name"></span></a>
+                        <a href="#email"><span class="white-text email"></span></a>
+                    {% endif %}
+
 				</div>
 			</li>
-			<li><a href="{{ url_for('login')}}">Login</a></li>
-			<li><a href="{{ url_for('register')}}">Register</a></li>
+			{% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('account')}}">Account</a></li>
+                <li><a href="{{ url_for('logout')}}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login')}}">Login</a></li>
+                <li><a href="{{ url_for('register')}}">Register</a></li>
+            {% endif %}
 		</ul>
 	</header>
 	<main>

@@ -5,7 +5,7 @@
     <form class="col s12" action="" method="POST">
         {{ form.hidden_tag() }}
         <div class="row">
-            <div class="input-field col s12">
+            <div class="input-field col s12 m6 offset-m3">
                 {% if form.email.errors %}
                     <i class="material-icons prefix red-text">email</i>
                     {{ form.email(class="validate", id="email")}}
@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="input-field col s12">
+            <div class="input-field col s12 m6 offset-m3">
                 {% if form.password.errors %}
                     <i class="material-icons prefix red-text">https</i>
                     {{ form.password(class="validate", id="password")}}
@@ -36,19 +36,22 @@
                 {% endif %}
             </div>
         </div>
-        <p>
+        <p class="col m6 offset-m3">
             <label for="remember">
                 {{ form.remember() }}
                 <span>Remember me</span>
             </label>
         </p>
-        <div>
-            {{ form.submit(class="btn waves-effect waves-teal blue", type="submit",)}}
+        <div class="col m6 offset-m3">
+            {{ form.submit(class="btn")}}
         </div>
-        <small class="grey-text"><a href="#">Forgot password?</a></small>
+        <div class="col s12 m6 offset-m3">
+            <small class="grey-text"><a href="#">Forgot password?</a></small>
+        </div>
     </form>
+    <div class="col s12 m6 offset-m3">
+        <small class="grey-text">Need an account? <a href="{{ url_for('register') }}">Sign Up</a></small>
+    </div>
 </div>
-<div>
-    <small class="grey-text">Need an account? <a href="{{ url_for('register') }}">Sign Up</a></small>
-</div>
+
 {% endblock %}  

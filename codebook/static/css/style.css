@@ -43,3 +43,6 @@ main {
     height: auto;
 }
 
+textarea.no_bottom_border {
+    border-bottom: none;
+}

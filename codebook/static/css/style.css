@@ -4,11 +4,11 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
+    background: url('../img/bg.jpg'), center/contain, no-repeat;
 }
 
 main {
     flex: 1 0 auto;
-    background-color: lightcyan;
 }
 
 /* ALERTS */
@@ -42,3 +42,4 @@ main {
     max-width: 100%;
     height: auto;
 }
+

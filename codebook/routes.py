@@ -1,8 +1,9 @@
 from codebook import app, mongo, bcrypt
 from flask import render_template, url_for, redirect, flash, request
-from codebook.forms import RegistrationForm, LoginForm, UpdateAccountForm
-from codebook.models import User
+from codebook.forms import RegistrationForm, LoginForm, UpdateAccountForm, NewPostForm
+from codebook.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
+from datetime import datetime
 import os
 import secrets
 from PIL import Image
@@ -12,7 +13,7 @@ from PIL import Image
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('index.html', users=mongo.db.users.find(), title="Home")
+    return render_template('index.html', users=mongo.db.users.find(), posts=mongo.db.posts.find(), title="Home")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -22,7 +23,10 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        new_user = User(username=form.username.data, email=form.email.data, password=hashed_password, profile_pic='default.jpg')
+        new_user = User(username=form.username.data,
+                        email=form.email.data,
+                        password=hashed_password,
+                        profile_pic='default.jpg')
         users = mongo.db.users
         users.insert_one(new_user.__dict__)
         flash(f'Account for {form.username.data} has been created! You can now log in.', 'success')
@@ -87,3 +91,20 @@ def account():
         flash('Error updating account. Please try again', 'fail')
     profile_pic = url_for('static', filename='prof_img/' + current_user.profile_pic)
     return render_template('account.html', title='Account', profile_pic=profile_pic, form=form)
+
+
+@app.route('/post/new', methods=['GET', 'POST'])
+@login_required
+def new_post():
+    form = NewPostForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data,
+                    short_desc=form.short_desc.data,
+                    content=form.content.data,
+                    author=current_user.username,
+                    date_posted=datetime.utcnow())
+        posts = mongo.db.posts
+        posts.insert_one(post.__dict__)
+        flash('Your post has been created!', 'success')
+        return redirect(url_for('home'))
+    return render_template('new_post.html', title='New Post', form=form)

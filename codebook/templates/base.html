@@ -15,12 +15,15 @@
 
 <body>
 	<header>
-		<nav>
-			<div class="nav-wrapper blue-grey darken-3">
+
+        <!-- NAVBAR  -->
+		<nav class='transparent'>
+			<div class="nav-wrapper">
 				<a href="{{ url_for('home') }}" class="brand-logo center">My codebook</a>
 				<a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
 				<ul class="right hide-on-med-and-down">
                     {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('new_post')}}">New Post</a></li>
                         <li><a href="{{ url_for('account')}}">Account</a></li>
                         <li><a href="{{ url_for('logout')}}">Logout</a></li>
                     {% else %}
@@ -30,12 +33,12 @@
             </ul>
 			</div>
 		</nav>
-
+        <!-- Navigation for mobile view -->
 		<ul id="slide-out" class="sidenav">
 			<li>
 				<div class="user-view">
-					<div class="background blue-grey darken-3">
-						<img src="">
+					<div class="background">
+						<img src="{{ url_for('static', filename='img/bg.jpg') }}">
 					</div>
                     {% if current_user.is_authenticated %}
                         <a href="#user"><img class="circle" src="{{ url_for('static', filename='prof_img/' + current_user.profile_pic) }}"></a>
@@ -50,6 +53,8 @@
 				</div>
 			</li>
 			{% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('new_post')}}">New Post</a></li>
+                <li><div class="divider"></div></li>
                 <li><a href="{{ url_for('account')}}">Account</a></li>
                 <li><a href="{{ url_for('logout')}}">Logout</a></li>
             {% else %}
@@ -57,7 +62,10 @@
                 <li><a href="{{ url_for('register')}}">Register</a></li>
             {% endif %}
 		</ul>
+        <!-- End Navigation for mobile view -->
+
 	</header>
+
 	<main>
 
     <!-- FLASH MESSAGE -->
@@ -78,7 +86,7 @@
 
 	</main>
 
-	<footer class="page-footer blue-grey darken-3">
+	<footer class="page-footer transparent">
 		<div class="container">
 			<div class="row">
 				<div class="col l6 s12">

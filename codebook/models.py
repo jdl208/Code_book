@@ -27,3 +27,12 @@ class User():
 
     def get_id(self):
         return self.username
+
+
+class Post():
+    def __init__(self, title, short_desc, content, author, date_posted):
+        self.title = title
+        self.short_desc = short_desc
+        self.content = content
+        self.author = author
+        self.date_posted = date_posted

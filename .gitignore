@@ -1,6 +1,3 @@
-.theia
+.theia/
 __pychace__
 *.pyc
-env.py
-app.py
-test.py

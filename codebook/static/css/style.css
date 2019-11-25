@@ -38,9 +38,11 @@ main {
 }
 
 .profile_img {
-    max-height: 300px;
-    max-width: 100%;
-    height: auto;
+    border: 2px solid black;
+    margin: auto;
+    max-height: 150px;
+    max-width: 150px;
+    border-radius: 50%
 }
 
 textarea.no_bottom_border {

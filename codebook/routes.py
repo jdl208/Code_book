@@ -62,8 +62,8 @@ def save_picture(form_picture):
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/prof_img', picture_fn)
-    #  Resize uploaded profile picture to 125 by 125 px
-    output_size = (300, 300)
+    #  Resize uploaded profile picture to 150 by 150 px
+    output_size = (150, 150)
     i = Image.open(form_picture)
     i.thumbnail(output_size)
     i.save(picture_path)

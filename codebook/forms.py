@@ -52,7 +52,7 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('That email is taken. Please log in or choose a different one.')
 
 
-class NewPostForm(FlaskForm):
+class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     short_desc = StringField('Description', validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])

@@ -4,37 +4,11 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-    background: url('../img/bg.jpg'), center/contain, no-repeat;
+    background: url('../img/bg.jpg'), center/cover, no-repeat;
 }
 
 main {
     flex: 1 0 auto;
-}
-
-/* ALERTS */
-.alert {
-    padding: .75rem 1.25rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: .25rem;
-}
-.alert_success {
-    color: #155724;
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-}
-
-.alert_fail {
-    color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
-}
-
-.alert_info {
-    color: #004085;
-    background-color: #cce5ff;
-    border-color: #b8daff;
 }
 
 .profile_img {
@@ -43,8 +17,4 @@ main {
     max-height: 150px;
     max-width: 150px;
     border-radius: 50%
-}
-
-textarea.no_bottom_border {
-    border-bottom: none;
 }

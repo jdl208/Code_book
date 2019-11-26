@@ -1,6 +1,6 @@
 from codebook import app, mongo, bcrypt
 from flask import render_template, url_for, redirect, flash, request
-from codebook.forms import RegistrationForm, LoginForm, UpdateAccountForm, NewPostForm
+from codebook.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from codebook.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
@@ -80,6 +80,7 @@ def account():
             old_value = mongo.db.users.find_one({'username': current_user.username})
             new_pic = {'$set': {'profile_pic': picture_file}}
             mongo.db.users.update_one(old_value, new_pic)
+        old_value = mongo.db.users.find_one({'username': current_user.username})
         new_value = {'$set': {'username': form.username.data, 'email': form.email.data}}
         mongo.db.users.update_one(old_value, new_value)
         flash('Your account has been updated!', 'success')
@@ -96,7 +97,7 @@ def account():
 @app.route('/post/new', methods=['GET', 'POST'])
 @login_required
 def new_post():
-    form = NewPostForm()
+    form = PostForm()
     if form.validate_on_submit():
         post = Post(title=form.title.data,
                     short_desc=form.short_desc.data,

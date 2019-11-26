@@ -1,91 +1,55 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-    <div class="col s12 m6 offset-m3">
-        <div class="card cyan darken-4 white-text">
-            <div class="card-image circle">
-                <img class="activator profile_img" src="{{ profile_pic }}">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-header">
+                Account info
             </div>
-            <div class="card-content">
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">account_circle</i>
-                        <input disabled value="{{ current_user.username }}" id="icon_prefix" type="text" class="white-text">
-                        <label class="white-text" for="icon_prefix">Username:</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">email</i>
-                        <input disabled value="{{ current_user.email }}" id="icon_prefix" type="text" class="white-text">
-                        <label class="white-text" for="icon_prefix">Email:</label>
-                    </div>
-                </div>
-                <div class="card-action">
-                    <span class="card-title activator right"><i class="material-icons right">edit</i></span>
-                </div>       
-            </div>
-            <div class="card-reveal cyan darken-4 white-text">
-                <span class="card-title center">Edit account<i class="material-icons right">close</i></span>
-            <div class="row">
-            <form class="col s12" action="" method="POST" enctype="multipart/form-data">
+            <img src="{{ profile_pic }}" class="card-img-top profile_img" alt="Profile picture">
+            <div class="card-body">
+                <form method="POST" action="" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
-                <div class="row">
-                    <div class="input-field col s12">
+                    <div class="form-group">
+                        {{ form.username.label(class="form-control-label") }}
                         {% if form.username.errors %}
-                        <i class="material-icons prefix red-text">account_circle</i>
-                            {{ form.username()}}
-                            {{ form.username.label(for="username")}}
+                            {{ form.username(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
                                 {% for error in form.username.errors %}
-                                <span class="helper-text red-text">{{ error }}</span>
+                                    <span>{{ error }}</span>
                                 {% endfor %}
+                            </div>
                         {% else %}
-                        <i class="material-icons prefix">account_circle</i>
-                            {{ form.username()}}
-                            {{ form.username.label(for="username")}}
+                            {{ form.username(class="form-control form-control-lg") }}
                         {% endif %}
                     </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                            {% if form.email.errors %}
-                            <i class="material-icons prefix red-text">email</i>
-                                {{ form.email(class="validate", id="email")}}
-                                {{ form.email.label(for="email")}}
-                                    {% for error in form.email.errors %}
-                                    <span class="helper-text red-text">{{ error }}</span>
-                                    {% endfor %}
-                            {% else %}
-                            <i class="material-icons prefix">email</i>
-                                {{ form.email(class="validate", id="email")}}
-                                {{ form.email.label(for="email")}}
-                            {% endif %}
-                        </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
-                        <div class="file-field input-field">   
-                            <div class="btn">
-                                <span>Choose file</span>
-                                {{ form.picture() }}
-                                {% if form.picture.errors %}
-                                    {% for error in form.email.errors %}
-                                        <span class="helper-text red-text">{{ error }}</span><br>
-                                    {% endfor %}
-                                {% endif %}
+                    <div class="form-group">
+                        {{ form.email.label(class="form-control-label") }}
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
                             </div>
-                            <div class="file-path-wrapper">
-                                <input for="picture" class="file-path validate" type="text" placeholder="to update profile picture!">
-                            </div>
-                        </div>
+                        {% else %}
+                            {{ form.email(class="form-control form-control-lg") }}
+                        {% endif %}
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col s12"> 
-                        {{ form.submit(class="btn") }}
+                    <div class="form-group">
+                        {{ form.picture.label() }}
+                        {{ form.picture(class="form-control-file") }}
+                        {% if form.picture.errors %}
+                            {% for error in form.picture.errors %}
+                                <span class="text-danger">{{ error }}</span></br>
+                            {% endfor %}
+                        {% endif %}
                     </div>
-                </div>
-            </form>
+                     <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

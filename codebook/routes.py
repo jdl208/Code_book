@@ -1,19 +1,24 @@
-from codebook import app, mongo, bcrypt
-from flask import render_template, url_for, redirect, flash, request
-from codebook.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
+from codebook import app, mongo, bcrypt, mail
+from flask import render_template, url_for, redirect, flash, request, abort
+from codebook.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
+                            PostForm, RequestResetForm, ResetPasswordForm)
 from codebook.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
 import os
 import secrets
 from PIL import Image
-# from bson.objectid import ObjectId
+from bson.objectid import ObjectId
+from flask_mail import Message
 
 
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('index.html', users=mongo.db.users.find(), posts=mongo.db.posts.find(), title="Home")
+    return render_template('index.html', users=mongo.db.users.find(),
+                           posts=mongo.db.posts.find(),
+                           modals=mongo.db.posts.find(),
+                           title="Home")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -109,3 +114,41 @@ def new_post():
         flash('Your post has been created!', 'success')
         return redirect(url_for('home'))
     return render_template('new_post.html', title='New Post', form=form)
+
+
+@app.route('/post/<post_id>')
+def post(post_id):
+    post = mongo.db.posts.find_one({'_id': ObjectId(post_id)})
+    return render_template('post.html', title=post["title"], post=post)
+
+
+@app.route('/post/<post_id>/update', methods=['GET', 'POST'])
+@login_required
+def update_post(post_id):
+    post = mongo.db.posts.find_one({'_id': ObjectId(post_id)})
+    if post['author'] != current_user.username:
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        new_value = {'$set': {'title': form.title.data,
+                              'short_desc': form.short_desc.data,
+                              'content': form.content.data}}
+        mongo.db.posts.update_one(post, new_value)
+        flash('Your post has been updated!', 'success')
+        return redirect(url_for('post', post_id=post['_id']))
+    elif request.method == 'GET':
+        form.title.data = post['title']
+        form.short_desc.data = post['short_desc']
+        form.content.data = post['content']
+    return render_template('new_post.html', title='Update Post', form=form)
+
+
+@app.route('/post/<post_id>/delete', methods=['POST'])
+@login_required
+def delete_post(post_id):
+    post = mongo.db.posts.find_one({'_id': ObjectId(post_id)})
+    if post['author'] != current_user.username:
+        abort(403)
+    mongo.db.posts.delete_one(post)
+    flash('Your post has been deleted', 'success')
+    return redirect(url_for('home'))

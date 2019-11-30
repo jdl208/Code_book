@@ -2,6 +2,7 @@
 {% block content %}
     <div class="card border-info mb-3">
         <div class="card-header bg-info text-white">
+            <button type="button" class="close" onclick="goBack()"><i class="fas fa-times text-white"></i></button>
             <h4>{{ post.title }}</h4>
             <small class="text-muted">{{ post.author }} - {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
         </div>

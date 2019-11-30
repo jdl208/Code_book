@@ -1,1 +1,4 @@
-CKEDITOR.replace( 'content' );
+function goBack() {
+    window.history.back();
+}
+

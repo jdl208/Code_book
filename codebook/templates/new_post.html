@@ -3,7 +3,8 @@
 
 <div class="card border-info mb-3"">
     <div class="card-header bg-info text-white">
-        New post
+        <button type="button" class="close" onclick="goBack()"><i class="fas fa-times text-white"></i></button>
+        <h4>{{ title }}</h4>
     </div>
     <div class="card-body text-dark">
         <form method="POST" action="">
@@ -46,6 +47,10 @@
                 {% else %}
                     {{ form.content(class="form-control form-control-lg") }}
                 {% endif %}
+            </div>
+            <div class="form-check">
+                {{ form.public(class="form-check-input") }}
+                {{ form.public.label(class="form-check-label") }}
             </div>   
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}
@@ -53,4 +58,11 @@
         </form>
     </div>
 </div>
+
+<!-- CKEditor -->
+<script src="https://cdn.ckeditor.com/4.13.0/basic/ckeditor.js"></script>    
+<script>
+    CKEDITOR.replace( 'content' );
+</script>
+
 {% endblock %}  

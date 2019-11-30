@@ -2,43 +2,45 @@
 {% block content %}
 <div class="row">
     <div class="col-md-6 offset-md-3">
-        <div class="card">
-            <div class="card-header">
-                Account info
+        <div class="card border-info mt-3">
+            <div class="card-header bg-info text-white">
+                <h4>Account info</h4>
             </div>
-            <img src="{{ profile_pic }}" class="card-img-top profile_img" alt="Profile picture">
+            <img src="{{ profile_pic }}" class="card-img-top profile_img border-info" alt="Profile picture">
             <div class="card-body">
                 <form method="POST" action="" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
                     <div class="form-group">
                         {{ form.username.label(class="form-control-label") }}
                         {% if form.username.errors %}
-                            {{ form.username(class="form-control form-control-lg is-invalid") }}
+                            {{ form.username(class="form-control is-invalid") }}
                             <div class="invalid-feedback">
                                 {% for error in form.username.errors %}
                                     <span>{{ error }}</span>
                                 {% endfor %}
                             </div>
                         {% else %}
-                            {{ form.username(class="form-control form-control-lg") }}
+                            {{ form.username(class="form-control") }}
                         {% endif %}
                     </div>
                     <div class="form-group">
                         {{ form.email.label(class="form-control-label") }}
                         {% if form.email.errors %}
-                            {{ form.email(class="form-control form-control-lg is-invalid") }}
+                            {{ form.email(class="form-control is-invalid") }}
                             <div class="invalid-feedback">
                                 {% for error in form.email.errors %}
                                     <span>{{ error }}</span>
                                 {% endfor %}
                             </div>
                         {% else %}
-                            {{ form.email(class="form-control form-control-lg") }}
+                            {{ form.email(class="form-control") }}
                         {% endif %}
                     </div>
-                    <div class="form-group">
-                        {{ form.picture.label() }}
-                        {{ form.picture(class="form-control-file") }}
+                    <label class="form-control-label" for="">Profile Picture</label>
+                    <div class="custom-file">
+                        <label class="form-control-label" for="">Profile Picture</label>
+                        {{ form.picture(class="custom-file-input") }}
+                        {{ form.picture.label(class="custom-file-label") }}
                         {% if form.picture.errors %}
                             {% for error in form.picture.errors %}
                                 <span class="text-danger">{{ error }}</span></br>
@@ -46,7 +48,7 @@
                         {% endif %}
                     </div>
                      <div class="form-group">
-                        {{ form.submit(class="btn btn-outline-info") }}
+                        {{ form.submit(class="btn btn-outline-info mt-3") }}
                     </div>
                 </form>
             </div>

@@ -10,14 +10,14 @@ class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=30)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
         user = mongo.db.users.find_one({'username': username.data})
         if user:
             raise ValidationError('That username is taken. Please choose a different one.')
-
 
     def validate_email(self, email):
         user = mongo.db.users.find_one({'email': email.data})
@@ -35,7 +35,7 @@ class LoginForm(FlaskForm):
 class UpdateAccountForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=30)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    picture = FileField('Update profile picture', validators=[FileAllowed(['jpg', 'png'])])
+    picture = FileField('Upload new profile picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
 
     def validate_username(self, username):
@@ -43,7 +43,6 @@ class UpdateAccountForm(FlaskForm):
             user = mongo.db.users.find_one({'username': username.data})
             if user:
                 raise ValidationError('That username is taken. Please choose a different one.')
-
 
     def validate_email(self, email):
         if email.data != current_user.email:
@@ -56,19 +55,10 @@ class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     short_desc = StringField('Description', validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
+    public = BooleanField('Public')
     submit = SubmitField('Post')
 
 
-class RequestResetForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Request password reset')
-
-    def validate_email(self, email):
-        user = mongo.db.users.find_one({'email': email.data})
-        if user is None:
-            raise ValidationError('There is no account with that email. You must register first.')
-
-class ResetPasswordForm(FlaskForm):
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Reset password')
+class SearchForm(FlaskForm):
+    query = StringField('Search', validators=[DataRequired()])
+    submit = SubmitField('Search')

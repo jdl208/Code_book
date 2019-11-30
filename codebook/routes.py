@@ -1,7 +1,7 @@
-from codebook import app, mongo, bcrypt, mail
+from codebook import app, mongo, bcrypt
 from flask import render_template, url_for, redirect, flash, request, abort
 from codebook.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
-                            PostForm, RequestResetForm, ResetPasswordForm)
+                            PostForm, SearchForm)
 from codebook.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
@@ -9,16 +9,31 @@ import os
 import secrets
 from PIL import Image
 from bson.objectid import ObjectId
-from flask_mail import Message
 
 
 @app.route('/')
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 def home():
-    return render_template('index.html', users=mongo.db.users.find(),
-                           posts=mongo.db.posts.find(),
-                           modals=mongo.db.posts.find(),
-                           title="Home")
+    form = SearchForm()
+    if form.validate_on_submit():
+        result = mongo.db.posts.find({'$and':[{'$text': {'$search': form.query.data}}, {'public': True}]})
+        return render_template('index.html', posts=result, title='Search results', form=form)
+    return render_template('index.html',
+                           posts=mongo.db.posts.find({'public': True}),
+                           title="Home", form=form)
+
+
+@app.route('/my_notes', methods=['GET', 'POST'])
+@login_required
+def my_notes():
+    form = SearchForm()
+    if current_user.is_authenticated:
+        if form.validate_on_submit():
+            result = mongo.db.posts.find({'$and':[{'$text': {'$search': form.query.data}}, {'username': current_user.username}]})
+            return render_template('index.html', posts=result, title='Search results', form=form)
+        return render_template('index.html',
+                               posts=mongo.db.posts.find({'author': current_user.username}),
+                               title="My notes", form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -85,6 +100,8 @@ def account():
             old_value = mongo.db.users.find_one({'username': current_user.username})
             new_pic = {'$set': {'profile_pic': picture_file}}
             mongo.db.users.update_one(old_value, new_pic)
+        if current_user.username != form.username.data:
+            mongo.db.posts.update_many({'author': current_user.username}, {'$set': {'author': form.username.data}})
         old_value = mongo.db.users.find_one({'username': current_user.username})
         new_value = {'$set': {'username': form.username.data, 'email': form.email.data}}
         mongo.db.users.update_one(old_value, new_value)
@@ -108,7 +125,8 @@ def new_post():
                     short_desc=form.short_desc.data,
                     content=form.content.data,
                     author=current_user.username,
-                    date_posted=datetime.utcnow())
+                    date_posted=datetime.utcnow(),
+                    public=form.public.data)
         posts = mongo.db.posts
         posts.insert_one(post.__dict__)
         flash('Your post has been created!', 'success')
@@ -132,7 +150,8 @@ def update_post(post_id):
     if form.validate_on_submit():
         new_value = {'$set': {'title': form.title.data,
                               'short_desc': form.short_desc.data,
-                              'content': form.content.data}}
+                              'content': form.content.data,
+                              'public': form.public.data}}
         mongo.db.posts.update_one(post, new_value)
         flash('Your post has been updated!', 'success')
         return redirect(url_for('post', post_id=post['_id']))
@@ -140,6 +159,7 @@ def update_post(post_id):
         form.title.data = post['title']
         form.short_desc.data = post['short_desc']
         form.content.data = post['content']
+        form.public.data = post['public']
     return render_template('new_post.html', title='Update Post', form=form)
 
 

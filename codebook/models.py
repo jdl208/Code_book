@@ -45,10 +45,11 @@ class User():
 
 
 class Post():
-    def __init__(self, title, short_desc, content, author, date_posted, public):
+    def __init__(self, title, short_desc, content, author, date_posted, public, avatar):
         self.title = title
         self.short_desc = short_desc
         self.content = content
         self.author = author
         self.date_posted = date_posted
         self.public = public
+        self.avatar = avatar

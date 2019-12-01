@@ -1,42 +1,99 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="row">
-        <div class="col s-12 mt-3">
-            <form class="" method="POST">
-            {{ form.hidden_tag() }}
-                <div class="input-group mb-3">
-                    {{ form.query(class="form-control") }}
-                    <div class="input-group-append">
-                        {{ form.submit(class="btn btn-light") }}
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="row">
-        <div class="accordion col s-12" id="accordionExample">
-            {% for post in posts %}
-                <div class="card border-warning">
-                    <a class="" data-toggle="collapse" data-target="#collapse{{post._id}}" aria-expanded="false" aria-controls="collapse{{post._id}}">
-                        <div class="card-header bg-warning" id="{{post._id}}">
-                            <h4>{{ post.title }}</h4>
-                            <div>{{post.short_desc}}</div>
-                        </div>
-                    </a>
-                    <div id="collapse{{post._id}}" class="collapse" aria-labelledby="post._id" data-parent="#accordionExample">
-                        <div class="card-body">
-                            {{ post.content | safe }}
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">{{ post.author }} - {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
-                            {% if post.author == current_user.username %}
-                                <a class="btn btn-secondary btn-sm" href="{{ url_for('update_post', post_id=post._id) }}"><i class="fas fa-pen"></i></a>
-                                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
-                            {% endif%}
-                        </div>
-                    </div>
-                </div>
-            {% endfor%}
-        </div>
-    </div>
-{% endblock %} 
+<div class="frontpage-bg pt-3 pb-3">
+	<div class="container">
+		<div class="row">
+			<!-- Welcome card -->
+			<div class="col-12 col-md-7 col-lg-8 mb-3">
+				<div class="card bg-dark text-light ">
+					<div class="card-body">
+						<h1 class="card-title">Notes for developers</h1>
+						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+					</div>
+				</div>
+			</div>
+			<!-- Sign In Card -->
+			<div class="col-12 col-md-5 col-lg-4 border-info">
+				<div class="card border-info">
+					<div class="card-header bg-info text-white">
+						<h5 class="card-title mb-0"><i class="fas fa-sign-in-alt"></i> Sign In</h5>
+					</div>
+					<div class="card-body">
+						<form method="POST" action="">
+							{{ form.hidden_tag() }}
+							<div class="form-group">
+								{{ form.email.label(class="form-control-label") }}
+								{% if form.email.errors %}
+								{{ form.email(class="form-control form-control-lg is-invalid") }}
+								<div class="invalid-feedback">
+									{% for error in form.email.errors %}
+									<span>{{ error }}</span>
+									{% endfor %}
+								</div>
+								{% else %}
+								{{ form.email(class="form-control form-control-lg") }}
+								{% endif %}
+							</div>
+							<div class="form-group">
+								{{ form.password.label(class="form-control-label") }}
+								{% if form.password.errors %}
+								{{ form.password(class="form-control form-control-lg is-invalid") }}
+								<div class="invalid-feedback">
+									{% for error in form.password.errors %}
+									<span>{{ error }}</span>
+									{% endfor %}
+								</div>
+								{% else %}
+								{{ form.password(class="form-control form-control-lg") }}
+								{% endif %}
+							</div>
+							<div class="form-check">
+								{{ form.remember(class="form-check-input") }}
+								{{ form.remember.label(class="form-check-label mb-3") }}
+							</div>
+							<div class="form-group">
+								{{ form.submit(class="btn btn-outline-info") }}
+							</div>
+						</form>
+					</div>
+					<div class="card-footer">
+						<small class="text-muted">Need An Account? <a class="ml-2" href="{{ url_for('register') }}">Sign Up Now</a></small>
+					</div>
+				</div>
+			</div>
+			<!-- End sign in card -->
+
+		</div>
+	</div>
+</div>
+
+<!-- Last 3 public notes -->
+<div class="container pt-5">
+	<h3 class="text-light text-center mb-5">Latest Entries</h3>
+	<div class="row">
+		{% for post in posts %}
+		<div class="col-12 col-md-4 mb-3">
+			<div class="card border-warning">
+				<div class="card-header bg-warning">
+					<h4 class="card-title">{{ post.title }}</h4>
+					<img class="float-left rounded-circle post-img" src="{{url_for('static', filename='prof_img/' + post.avatar)}}" alt="Avatar">
+					<small class="text-muted"> {{ post.author }}</small>
+				</div>
+				<div class="card-body">
+					<h5 class="card-subtitle mb-2 text-muted">{{post.short_desc}}</h5>
+					{{ post.content | safe }}
+				</div>
+				<div class="card-footer">
+					{% if post.author == current_user.username %}
+					<a class="btn btn-secondary btn-sm"
+						href="{{ url_for('update_post', post_id=post._id) }}"><i class="fas fa-pen"></i></a>
+					<button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
+					{% endif%}
+					<small class="text-muted">Last update: {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
+				</div>
+			</div>
+		</div>
+		{% endfor%}
+	</div>
+</div>
+{% endblock %}

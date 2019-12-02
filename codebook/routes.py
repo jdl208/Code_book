@@ -34,10 +34,12 @@ def home():
 def public():
     form = SearchForm()
     if form.validate_on_submit():
-        result = mongo.db.posts.find({'$and':[{'$text': {'$search': form.query.data}}, {'username': current_user.username}]})
+        result = mongo.db.posts.find({'$and': [{'$text': {'$search': form.query.data}},
+                                               {'username': current_user.username}]})
         return render_template('notes.html', posts=result, title='Search results', form=form)
     posts = mongo.db.posts.find({'$query': {'public': True}, '$orderby': {'date_posted': -1}})
-    return render_template('notes.html', posts=posts, title="Public notes", form=form)
+    return render_template('notes.html', posts=posts, title="Public notes",
+                           form=form, placeholder='Search public notes')
 
 
 @app.route('/my_notes', methods=['GET', 'POST'])
@@ -46,11 +48,12 @@ def my_notes():
     form = SearchForm()
     if current_user.is_authenticated:
         if form.validate_on_submit():
-            result = mongo.db.posts.find({'$and':[{'$text': {'$search': form.query.data}}, {'username': current_user.username}]})
+            result = mongo.db.posts.find({'$and': [{'$text': {'$search': form.query.data}},
+                                                   {'username': current_user.username}]})
             return render_template('notes.html', posts=result, title='Search results', form=form)
         return render_template('notes.html',
                                posts=mongo.db.posts.find({'author': current_user.username}),
-                               title="My notes", form=form)
+                               title="My notes", form=form, placeholder='Search my notes')
 
 
 @app.route('/register', methods=['GET', 'POST'])

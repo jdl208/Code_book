@@ -39,7 +39,7 @@ def public():
         return render_template('notes.html', posts=result, title='Search results', form=form)
     posts = mongo.db.posts.find({'$query': {'public': True}, '$orderby': {'date_posted': -1}})
     return render_template('notes.html', posts=posts, title="Public notes",
-                           form=form, placeholder='Search public notes')
+                          form=form, placeholder='Search public notes')
 
 
 @app.route('/my_notes', methods=['GET', 'POST'])

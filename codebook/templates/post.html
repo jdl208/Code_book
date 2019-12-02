@@ -1,37 +1,41 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="card border-info mb-3">
-        <div class="card-header bg-info text-white">
-            <button type="button" class="close" onclick="goBack()"><i class="fas fa-times text-white"></i></button>
-            <h4>{{ post.title }}</h4>
-            <small class="text-muted">{{ post.author }} - {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
-        </div>
-        <div class="card-body bg-light text-info">
-            {{ post.content | safe }}
-        </div>
-        {% if post.author == current_user.username %}
-            <div class="card-footer">
-                <a class="btn btn-secondary btn-sm" href="{{ url_for('update_post', post_id=post._id) }}"><i class="fas fa-pen"></i></a>
-                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
-            </div>
-        {% endif%}
-    </div>
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete post?</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<div class="card border-warning mt-4">
+	<div class="card-header bg-warning">
+		<button type="button" class="close" onclick="goBack()"><i class="fas fa-times text-black"></i></button>
+		<h4>{{ post.title }}</h4>
+		<img class="float-left rounded-circle post-img" src="{{ url_for('static', filename='prof_img/' + post.avatar) }}" alt="Avatar">
+		<small class="ml-2"> {{ post.author }}</small>
+	</div>
+	<div class="card-body">
+		{{ post.content | safe }}
+	</div>
+	<div class="card-footer">
+		{% if post.author == current_user.username %}
+		<a class="btn btn-secondary btn-sm"
+			href="{{ url_for('update_post', post_id=post._id) }}"><i class="fas fa-pen"></i></a>
+		<button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
+		{% endif%}
+		<small class="text-muted">Last update: {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
+	</div>
+</div>
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteModalLabel">Delete post?</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Exit</button>
-                <form action="{{ url_for('delete_post', post_id=post._id) }}" method="post">
-                    <input type="submit" class="btn btn-danger" value="Delete">    
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Exit</button>
+				<form action="{{ url_for('delete_post', post_id=post._id) }}" method="post">
+					<input type="submit" class="btn btn-danger" value="Delete">
                 </form>
-            </div>
-            </div>
-        </div>
-    </div>
-{% endblock %} 
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

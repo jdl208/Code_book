@@ -1,44 +1,51 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 class="text-center text-white mt-3" >{{title}}</h1>
+<h1 class="text-center text-white mt-3">{{title}}</h1>
 
-    <div class="row">
-        <div class="col s-12 mt-3">
-            <form class="" method="POST">
-            {{ form.hidden_tag() }}
-                <div class="input-group mb-3">
-                    {{ form.query(class="form-control") }}
-                    <div class="input-group-append">
-                        {{ form.submit(class="btn btn-light") }}
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="row">
-        <div class="accordion col s-12" id="accordionExample">
-            {% for post in posts %}
-                <div class="card border-warning">
-                    <a class="" data-toggle="collapse" data-target="#collapse{{post._id}}" aria-expanded="false" aria-controls="collapse{{post._id}}">
-                        <div class="card-header bg-warning" id="{{post._id}}">
-                            <h4>{{ post.title }}</h4>
-                            <div>{{post.short_desc}}</div>
-                        </div>
-                    </a>
-                    <div id="collapse{{post._id}}" class="collapse" aria-labelledby="post._id" data-parent="#accordionExample">
-                        <div class="card-body">
-                            {{ post.content | safe }}
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">{{ post.author }} - {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
-                            {% if post.author == current_user.username %}
-                                <a class="btn btn-secondary btn-sm" href="{{ url_for('update_post', post_id=post._id) }}"><i class="fas fa-pen"></i></a>
-                                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
-                            {% endif%}
-                        </div>
-                    </div>
-                </div>
-            {% endfor%}
-        </div>
-    </div>
-{% endblock %} 
+<!-- SEARCH BAR -->
+<div class="row">
+	<div class="col-12 mt-3">
+		<form class="" method="POST">
+			{{ form.hidden_tag() }}
+			<div class="input-group mb-3">
+				{{ form.query(class="form-control", placeholder=placeholder) }}
+				<div class="input-group-append">
+					{{ form.submit(class="btn btn-light") }}
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<!-- NOTES -->
+<div class="row">
+	<div class="accordion col s-12" id="accordionExample">
+		{% for post in posts %}
+		<div class="card border-info">
+			<a class="" data-toggle="collapse" data-target="#collapse{{post._id}}" aria-expanded="false"
+				aria-controls="collapse{{post._id}}">
+				<div class="card-header bg-info" id="{{post._id}}">
+					<h4 class="card-title">{{ post.title }}</h4>
+					<img class="float-left rounded-circle post-img" src="{{ url_for('static', filename='prof_img/' + post.avatar) }}" alt="Avatar">
+					<small class="ml-2"> {{ post.author }}</small>
+
+				</div>
+			</a>
+			<div id="collapse{{post._id}}" class="collapse" aria-labelledby="post._id" data-parent="#accordionExample">
+				<div class="card-body">
+					<div>{{post.short_desc}}</div>
+					{{ post.content | safe }}
+				</div>
+				<div class="card-footer">
+					<a class="btn btn-secondary btn-sm" href="{{ url_for('post', post_id=post._id) }}"><i class="fas fa-expand-arrows-alt"></i></a>
+					{% if post.author == current_user.username %}
+					<a class="btn btn-secondary btn-sm m-1" href="{{ url_for('update_post', post_id=post._id) }}"><i class="fas fa-pen"></i></a>
+					{% endif%}
+                    <small class="text-muted">Last update: {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
+				</div>
+			</div>
+		</div>
+		{% endfor%}
+	</div>
+</div>
+{% endblock %}

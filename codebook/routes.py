@@ -25,7 +25,7 @@ def home():
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('my_notes'))
         else:
-            flash('Login unsuccesful, please check your email and/or password!', 'fail')
+            flash('Login unsuccesful, please check your email and/or password!', 'danger')
     posts = mongo.db.posts.find({'$query': {'public': True}, '$orderby': {'date_posted': -1}}).limit(3)
     return render_template('index.html', posts=posts, title="Home", form=form)
 
@@ -84,7 +84,7 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('my_notes'))
         else:
-            flash('Login unsuccesful, please check your email and/or password!', 'fail')
+            flash('Login unsuccesful, please check your email and/or password!', 'danger')
     return render_template('login.html', title='Login', form=form)
 
 
@@ -129,7 +129,7 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     else:
-        flash('Error updating account. Please try again', 'fail')
+        flash('Error updating account. Please try again', 'danger')
     profile_pic = url_for('static', filename='prof_img/' + current_user.profile_pic)
     return render_template('account.html', title='Account', profile_pic=profile_pic, form=form)
 

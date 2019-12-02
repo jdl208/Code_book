@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<!-- /DIV TO STOP CONTAINER FROM BASE.HTML -->
+<!-- /DIV TO BREAK CONTAINER FROM BASE.HTML -->
 </div>
 
 <div class="frontpage-bg pt-3 pb-3">
@@ -12,7 +12,16 @@
 					<div class="card-body">
 						<h1 class="d-none d-md-block card-title">Notes for developers</h1>
 						<h3 class="d-block d-md-none card-title">Notes for developers</h3>
-						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						<p class="card-text">devNotes is a place where you can store all your notes regarding your web
+							development work and you can share with your fellow developers and mostly for helping
+							starting developers have aplace where they can find solutions to issues where a lot of
+							developers already ran into.</p>
+						<p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
+							molestiae minus fugiat, qui dolores animi voluptate. Aspernatur facilis laboriosam, fugit
+							eos et adipisci pariatur tempore, soluta, ea laudantium maiores aliquam.</p>
+						<p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
+							molestiae minus fugiat, qui dolores animi voluptate. Aspernatur facilis laboriosam, fugit
+							eos et adipisci pariatur tempore, soluta, ea laudantium maiores aliquam.</p>
 					</div>
 				</div>
 			</div>
@@ -73,26 +82,23 @@
 
 <!-- Last 3 public notes -->
 <div class="container pt-5">
-	<h3 class="text-light text-center mb-5">Latest Entries</h3>
+	<h3 class="text-light text-center mb-5">Latest Entries & Updates</h3>
 	<div class="row">
 		{% for post in posts %}
 		<div class="col-12 col-md-4 mb-3">
-			<div class="card border-warning">
-				<div class="card-header bg-warning">
+			<div class="card border-info">
+				<div class="card-header bg-info">
 					<h4 class="card-title">{{ post.title }}</h4>
-					<img class="float-left rounded-circle post-img" src="{{url_for('static', filename='prof_img/' + post.avatar)}}" alt="Avatar">
-					<small class="text-muted"> {{ post.author }}</small>
+					<img class="float-left rounded-circle post-img" src="{{ url_for('static', filename='prof_img/' + post.avatar) }}" alt="Avatar">
+					<small class="ml-2"> {{ post.author }}</small>
 				</div>
 				<div class="card-body">
 					<h5 class="card-subtitle mb-2 text-muted">{{post.short_desc}}</h5>
 					{{ post.content | safe }}
 				</div>
 				<div class="card-footer">
-					{% if post.author == current_user.username %}
-					<a class="btn btn-secondary btn-sm"
-						href="{{ url_for('update_post', post_id=post._id) }}"><i class="fas fa-pen"></i></a>
-					<button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
-					{% endif%}
+					<a role="button" class="btn btn-secondary btn-sm"
+						href="{{ url_for('post', post_id=post._id) }}"><i class="fas fa-expand-arrows-alt"></i></a>
 					<small class="text-muted">Last update: {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
 				</div>
 			</div>
@@ -100,6 +106,7 @@
 		{% endfor%}
 	</div>
 </div>
+
 <!-- DIV TO RESTART CONTAINER FROM BASE.HTML -->
 <div class="container">
-{% endblock %}
+	{% endblock %}

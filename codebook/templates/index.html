@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
+<!-- /DIV TO STOP CONTAINER FROM BASE.HTML -->
+</div>
+
 <div class="frontpage-bg pt-3 pb-3">
 	<div class="container">
 		<div class="row">
@@ -7,7 +10,8 @@
 			<div class="col-12 col-md-7 col-lg-8 mb-3">
 				<div class="card bg-dark text-light ">
 					<div class="card-body">
-						<h1 class="card-title">Notes for developers</h1>
+						<h1 class="d-none d-md-block card-title">Notes for developers</h1>
+						<h3 class="d-block d-md-none card-title">Notes for developers</h3>
 						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
 					</div>
 				</div>
@@ -96,4 +100,6 @@
 		{% endfor%}
 	</div>
 </div>
+<!-- DIV TO RESTART CONTAINER FROM BASE.HTML -->
+<div class="container">
 {% endblock %}

@@ -14,6 +14,10 @@ from bson.objectid import ObjectId
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+    '''
+    Check if a user is signed in and then direct him to his own notes or to the frontpage.
+    If not signed in You can sign in on the page directly
+    '''
     if current_user.is_authenticated:
         return redirect(url_for('my_notes'))
     form = LoginForm()
@@ -32,10 +36,13 @@ def home():
 
 @app.route('/public', methods=['GET', 'POST'])
 def public():
+    '''
+    Route to all the public notes with a search bar that searches through all the public notes.
+    '''
     form = SearchForm()
     if form.validate_on_submit():
         result = mongo.db.posts.find({'$and': [{'$text': {'$search': form.query.data}},
-                                               {'username': current_user.username}]})
+                                               {'public': True}]})
         return render_template('notes.html', posts=result, title='Search results', form=form)
     posts = mongo.db.posts.find({'$query': {'public': True}, '$orderby': {'date_posted': -1}})
     return render_template('notes.html', posts=posts, title="Public notes",
@@ -45,12 +52,19 @@ def public():
 @app.route('/my_notes', methods=['GET', 'POST'])
 @login_required
 def my_notes():
+    '''
+    View to your personal notes. If you haven't got a note yet, 
+    it wil direct you to the page to make a note.
+    '''
     form = SearchForm()
     if current_user.is_authenticated:
         if form.validate_on_submit():
             result = mongo.db.posts.find({'$and': [{'$text': {'$search': form.query.data}},
                                                    {'username': current_user.username}]})
             return render_template('notes.html', posts=result, title='Search results', form=form)
+        if mongo.db.posts.count({'author': current_user.username}) == 0:
+            flash('You have no notes yet. Make your first note here.', 'info')
+            return redirect(url_for('new_post'))
         return render_template('notes.html',
                                posts=mongo.db.posts.find({'author': current_user.username}),
                                title="My notes", form=form, placeholder='Search my notes')
@@ -58,8 +72,12 @@ def my_notes():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    '''
+    View to register page and create a user with a hashed password.
+    It will set a default profile image.
+    '''
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('my_notes'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -76,6 +94,10 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    '''
+    View to the login page.
+    Checks if submitted values are correct or it will return an error
+    '''
     if current_user.is_authenticated:
         return redirect(url_for('my_notes'))
     form = LoginForm()
@@ -93,11 +115,18 @@ def login():
 
 @app.route('/logout')
 def logout():
+    '''
+    Log user out
+    '''
     logout_user()
     return redirect(url_for('home'))
 
 
 def save_picture(form_picture):
+    '''
+    Save a picture the user sets as a profile image.
+    It will be resized to 150 by 150 pixels
+    '''
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
@@ -113,6 +142,11 @@ def save_picture(form_picture):
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
+    '''
+    View to update account information.
+    When a user updates his profile image or username. 
+    This will also be adjusted in all the notes from user.
+    '''
     form = UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
@@ -128,6 +162,7 @@ def account():
         mongo.db.users.update_one(old_value, new_value)
         flash('Your account has been updated!', 'success')
         return redirect(url_for('account'))
+    #  Fill the formfields with the current data
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
@@ -140,6 +175,9 @@ def account():
 @app.route('/post/new', methods=['GET', 'POST'])
 @login_required
 def new_post():
+    '''
+    Make a new post and submit it to mongodb
+    '''
     form = PostForm()
     if form.validate_on_submit():
         post = Post(title=form.title.data,
@@ -149,8 +187,7 @@ def new_post():
                     date_posted=datetime.utcnow(),
                     public=form.public.data,
                     avatar=current_user.profile_pic)
-        posts = mongo.db.posts
-        posts.insert_one(post.__dict__)
+        mongo.db.posts.insert_one(post.__dict__)
         flash('Your post has been created!', 'success')
         return redirect(url_for('home'))
     return render_template('new_post.html', title='New Post', form=form)
@@ -158,6 +195,9 @@ def new_post():
 
 @app.route('/post/<post_id>')
 def post(post_id):
+    '''
+    View to a single note
+    '''
     post = mongo.db.posts.find_one({'_id': ObjectId(post_id)})
     return render_template('post.html', title=post["title"], post=post)
 
@@ -165,6 +205,10 @@ def post(post_id):
 @app.route('/post/<post_id>/update', methods=['GET', 'POST'])
 @login_required
 def update_post(post_id):
+    '''
+    View to update notes.
+    When a user tries to reach a note from another user. He will get a 403 error
+    '''
     post = mongo.db.posts.find_one({'_id': ObjectId(post_id)})
     if post['author'] != current_user.username:
         abort(403)
@@ -178,6 +222,7 @@ def update_post(post_id):
         mongo.db.posts.update_one(post, new_value)
         flash('Your post has been updated!', 'success')
         return redirect(url_for('post', post_id=post['_id']))
+    #  Fill form with current data from database
     elif request.method == 'GET':
         form.title.data = post['title']
         form.short_desc.data = post['short_desc']
@@ -189,6 +234,10 @@ def update_post(post_id):
 @app.route('/post/<post_id>/delete', methods=['POST'])
 @login_required
 def delete_post(post_id):
+    '''
+    View to delete your posts
+    When an unauthorized user tries ot delete a post it will get a 403 error
+    '''
     post = mongo.db.posts.find_one({'_id': ObjectId(post_id)})
     if post['author'] != current_user.username:
         abort(403)

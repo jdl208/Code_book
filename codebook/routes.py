@@ -60,13 +60,13 @@ def my_notes():
     if current_user.is_authenticated:
         if form.validate_on_submit():
             result = mongo.db.posts.find({'$and': [{'$text': {'$search': form.query.data}},
-                                                   {'username': current_user.username}]})
+                                                   {'author': current_user.username}]})
             return render_template('notes.html', posts=result, title='Search results', form=form)
         if mongo.db.posts.count({'author': current_user.username}) == 0:
             flash('You have no notes yet. Make your first note here.', 'info')
             return redirect(url_for('new_post'))
         return render_template('notes.html',
-                               posts=mongo.db.posts.find({'author': current_user.username}),
+                               posts=mongo.db.posts.find({'$query': {'author': current_user.username}, '$orderby': {'date_posted': -1}}),
                                title="My notes", form=form, placeholder='Search my notes')
 
 
@@ -190,7 +190,7 @@ def new_post():
         mongo.db.posts.insert_one(post.__dict__)
         flash('Your post has been created!', 'success')
         return redirect(url_for('home'))
-    return render_template('new_post.html', title='New Post', form=form)
+    return render_template('new_post.html', title='New Note', form=form)
 
 
 @app.route('/post/<post_id>')

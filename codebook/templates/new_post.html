@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="card border-info mb-3"">
+<div class="card border-info mt-3"">
     <div class="card-header bg-info text-white">
         <button type="button" class="close" onclick="goBack()"><i class="fas fa-times text-white"></i></button>
-        <h4>{{ title }}</h4>
+        <h4 class="card-title mb-0"><i class="far fa-plus-square mr-2"></i>{{ title }}</h4>
     </div>
     <div class="card-body text-dark">
         <form method="POST" action="">
@@ -48,7 +48,7 @@
                     {{ form.content(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-            <div class="form-check">
+            <div class="form-check mb-3">
                 {{ form.public(class="form-check-input") }}
                 {{ form.public.label(class="form-check-label") }}
             </div>   

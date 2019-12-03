@@ -17,7 +17,7 @@
 	</div>
 </div>
 
-<!-- NOTES -->
+<!-- NOTEs -->
 <div class="row">
 	<div class="accordion col s-12" id="accordionExample">
 		{% for post in posts %}
@@ -32,17 +32,15 @@
 				</div>
 			</a>
 			<div id="collapse{{post._id}}" class="collapse" aria-labelledby="post._id" data-parent="#accordionExample">
-				<div class="card-body">
-					<div>{{post.short_desc}}</div>
-					{{ post.content | safe }}
-				</div>
-				<div class="card-footer">
-					<a class="btn btn-secondary btn-sm" href="{{ url_for('post', post_id=post._id) }}"><i class="fas fa-expand-arrows-alt"></i></a>
-					{% if post.author == current_user.username %}
-					<a class="btn btn-secondary btn-sm m-1" href="{{ url_for('update_post', post_id=post._id) }}"><i class="fas fa-pen"></i></a>
-					{% endif%}
-                    <small class="text-muted">Last update: {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
-				</div>
+				<a class="text-reset text-decoration-none" href="{{ url_for('post', post_id=post._id) }}"></i>
+					<div class="card-body">
+						<div>{{post.short_desc}}</div>
+						{{ post.content | safe }}
+					</div>
+					<div class="card-footer">
+						<small class="text-muted">Last update: {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
+					</div>
+				</a>
 			</div>
 		</div>
 		{% endfor%}

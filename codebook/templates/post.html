@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="card border-warning mt-4">
-	<div class="card-header bg-warning">
+<div class="card border-info mt-4 single-card">
+	<div class="card-header bg-info">
 		<button type="button" class="close" onclick="goBack()"><i class="fas fa-times text-black"></i></button>
 		<h4>{{ post.title }}</h4>
 		<img class="float-left rounded-circle post-img" src="{{ url_for('static', filename='prof_img/' + post.avatar) }}" alt="Avatar">
@@ -16,7 +16,7 @@
 			href="{{ url_for('update_post', post_id=post._id) }}"><i class="fas fa-pen"></i></a>
 		<button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
 		{% endif%}
-		<small class="text-muted">Last update: {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
+		<small class="text-muted ml-2">Last update: {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
 	</div>
 </div>
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
@@ -24,7 +24,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="deleteModalLabel">Delete post?</h5>
+				<h5 class="modal-title" id="deleteModalLabel">Delete Note?</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>

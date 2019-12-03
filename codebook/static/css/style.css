@@ -28,3 +28,7 @@ main {
 .post-img {
     max-width: 30px;
 }
+
+.single-card {
+    min-height: 50vh;
+}

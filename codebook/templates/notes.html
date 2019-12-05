@@ -34,7 +34,7 @@
 			<div id="collapse{{post._id}}" class="collapse" aria-labelledby="post._id" data-parent="#accordionExample">
 				<a class="text-reset text-decoration-none" href="{{ url_for('post', post_id=post._id) }}"></i>
 					<div class="card-body">
-						<div>{{post.short_desc}}</div>
+						<p>{{post.short_desc}}</p>
 						{{ post.content | safe }}
 					</div>
 					<div class="card-footer">

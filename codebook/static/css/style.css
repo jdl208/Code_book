@@ -25,6 +25,14 @@ main {
     background: url('../img/bg-jumbotron.jpg'), center/cover no-repeat;
 }
 
+.frontpage-card {
+    height: 400px;
+}
+
+.frontpage-card-body {
+    overflow: hidden;
+}
+
 .post-img {
     max-width: 30px;
 }

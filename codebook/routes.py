@@ -84,7 +84,7 @@ def register():
         new_user = User(username=form.username.data,
                         email=form.email.data,
                         password=hashed_password,
-                        profile_pic='default.jpg')
+                        profile_pic='default.png')
         users = mongo.db.users
         users.insert_one(new_user.__dict__)
         flash(f'Account for {form.username.data} has been created! You can now log in.', 'success')

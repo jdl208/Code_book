@@ -2,3 +2,4 @@
 __pychace__
 *.pyc
 devNotes/
+.vscode/

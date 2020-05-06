@@ -1,5 +1,8 @@
-import smtplib, ssl, os, secrets
-from codebook import app, mongo, bcrypt, mail
+import smtplib
+import ssl
+import os
+import secrets
+from codebook import app, mongo, bcrypt
 from flask import render_template, url_for, redirect, flash, request, abort
 from codebook.forms import (
     RegistrationForm,
@@ -15,7 +18,6 @@ from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
 from PIL import Image
 from bson.objectid import ObjectId
-from flask_mail import Message
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -268,14 +270,35 @@ def send_reset_email(user):
         username=user["username"], email=user["email"], password=user["password"], profile_pic=user["profile_pic"]
     )
     token = reset_user.get_reset_token()
-    msg = Message("Password Reset Request", sender="johandeleeuw@gmail.com", recipients=[reset_user.email])
-    msg.body = f"""To reset your password, visit the following link:
+
+    port = 587  # For starttls
+    smtp_server = "smtp.gmail.com"
+    sender_email = os.environ.get("MAIL_USERNAME")
+    receiver_email = user["email"]
+    password = os.environ.get("MAIL_PASSWORD")
+    message = f"""\
+Subject: Password Reset Request
+
+To reset your password, visit the following link:
 
 {url_for('reset_token', token=token, _external=True)}
 
-If you did not make this request then simply ignore this email and no changes will be made.
-"""
-    mail.send(msg)
+If you did not make this request then simply ignore this email and no changes will be made."""
+
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+
+    # Try to log in to server and send email
+    try:
+        server = smtplib.SMTP(smtp_server, port)
+        server.starttls(context=context)  # Secure the connection
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
+    except Exception as e:
+        # Print any error messages to stdout
+        print(e)
+    finally:
+        server.quit()
 
 
 @app.route("/reset_password", methods=["GET", "POST"])
@@ -302,7 +325,6 @@ def reset_token(token):
     form = ResetPasswordForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
-        user.password = hashed_password
         mongo.db.users.update_one({"email": user["email"]}, {"$set": {"password": hashed_password}})
         flash("Your password has been updated! You are now able to log in", "success")
         return redirect(url_for("login"))
